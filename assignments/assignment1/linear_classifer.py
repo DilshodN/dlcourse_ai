@@ -15,7 +15,15 @@ def softmax(predictions):
     '''
     # TODO implement softmax
     # Your final implementation shouldn't have any loops
-    raise Exception("Not implemented!")
+    if predictions.ndim == 1:
+        norm_pred = predictions - np.max(predictions)
+        exp_sum = np.sum(np.exp(norm_pred))
+    else:
+        norm_pred = predictions - np.max(predictions, axis=1)[:, np.newaxis]
+        exp_sum = np.sum(np.exp(norm_pred), axis=1)[:, np.newaxis]
+    probs = np.exp(norm_pred) / exp_sum
+    
+    return probs
 
 
 def cross_entropy_loss(probs, target_index):
@@ -33,7 +41,14 @@ def cross_entropy_loss(probs, target_index):
     '''
     # TODO implement cross-entropy
     # Your final implementation shouldn't have any loops
-    raise Exception("Not implemented!")
+    if probs.ndim == 1:
+        loss = -np.log(probs[target_index])
+    else:
+        target_index = target_index.flatten()
+        str_index_arr = np.arange(target_index.shape[0])
+        loss = -np.mean(np.log(probs[(str_index_arr, target_index)]))
+
+    return loss
 
 
 def softmax_with_cross_entropy(predictions, target_index):
@@ -161,12 +176,3 @@ class LinearSoftmaxClassifier():
         raise Exception("Not implemented!")
 
         return y_pred
-
-
-
-                
-                                                          
-
-            
-
-                
